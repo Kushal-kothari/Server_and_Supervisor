@@ -31,17 +31,18 @@ You and I have memories longer than the road stretches out ahead\x1b[0m.\r\n"]).
 %
 % start_server/2: starts listening for incoming connections on the port
 % add any Port number eg:12321 and your yggdrasil address in the place of "Yggdrasil" 
+% case re:run(Yggdrasil,"20") of
+%   {match, ...}
 
 
 yggdrasil_connect(Port,Yggdrasil) ->
-  {match,Check_yggdrasil} = re:run(Yggdrasil,"20"),
-  if
-      (Check_yggdrasil == [{0,2}]) -> {ok,Parsed_add} = inet:parse_address(Yggdrasil),  
-                                       spawn(fun () -> {ok, Listen} =  gen_tcp:listen(Port, [binary,inet6,{packet, raw},{nodelay, true},{reuseaddr, true},{active, once},{ip,Parsed_add}]),
-                                       connect(Listen,Parsed_add)
-                                        end),
-                                       io:format("~p Yggdrasil Server Started.~n", [erlang:localtime()]);    
-      true -> io:format("Not a Yggdrasil address")
+  case re:run(Yggdrasil,"20") of
+    {match,[{0,2}]} -> {ok,Parsed_add} = inet:parse_address(Yggdrasil),  
+                       spawn(fun () -> {ok, Listen} =  gen_tcp:listen(Port, [binary,inet6,{packet, raw},{nodelay, true},{reuseaddr, true},{active, once},{ip,Parsed_add}]),
+                       connect(Listen,Parsed_add)
+                       end),
+                       io:format("~p Yggdrasil Server Started.~n", [erlang:localtime()]);    
+    nomatch -> io:format("Not a Yggdrasil address ")
    end. 
 
 
@@ -52,21 +53,10 @@ connect(Listen,Parsed_add) ->
   {ok, Socket} = gen_tcp:accept(Listen),
   inet:setopts(Socket, [binary,inet6,{packet, raw},{nodelay, true},{reuseaddr, true},{active, once},{ip,Parsed_add}]), %add your own Yggdrasil address
   spawn_link(yggdrasil_logic, connect, [Listen,Parsed_add]),
-
-
-
-  gen_tcp:send(Socket, <<255, 252, 3>>),
-
-
-
-  gen_tcp:send(Socket, <<255, 252, 1>>),
-
   gen_tcp:send(Socket, ?WELCOME_MESSAGE),
   gen_tcp:send(Socket, ?LINE_PREFIX),
   recv_loop(Socket),
   gen_tcp:close(Socket).
-
-
 
 %
 % handle_data/2: handles data incoming from a connection 
