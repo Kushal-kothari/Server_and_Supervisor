@@ -3,7 +3,7 @@
 -behaviour(gen_server).  %% we want to declare a behaviour which is gen server.
 
 %% API
--export([ stop/0, start_link/0,yggdrasil_kushal/2]). %what client can see
+-export([ stop/0, start_link/0,yggdrasil_connect/2]). %what client can see
 
 %%GEN SERVER
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]).
@@ -11,8 +11,8 @@
 
 % %%%%%%%%%%%%%%%%% CLIENT CALL
 
-yggdrasil_kushal(Port, Yggdrasil) ->
-    gen_server:call({global, ?MODULE}, {yggdrasil_kushal,Port, Yggdrasil}).
+yggdrasil_connect(Port, Yggdrasil) ->
+    gen_server:call({global, ?MODULE}, {yggdrasil_connect,Port, Yggdrasil}).
 
 
 stop() ->
@@ -38,8 +38,8 @@ init(_Args) ->
 
 
 
-handle_call({yggdrasil_kushal,Port, Yggdrasil}, _From, State) -> % handle call is a synchronise function.it basically going to call the factorial logic % and it is going to wait for a reply.this is crucil bcoz it is going to wait so if the factorial logic function takes ages basically the srever is actually going to wait till it recieves a reply.We can fix that by putting a timeout here and once the tout of 2000 is up.to terminate handle information kicks in
-     {reply, yggdrasil_logic:yggdrasil_kushal(Port, Yggdrasil), State};
+handle_call({yggdrasil_connect,Port, Yggdrasil}, _From, State) -> % handle call is a synchronise function.it basically going to call the factorial logic % and it is going to wait for a reply.this is crucil bcoz it is going to wait so if the factorial logic function takes ages basically the srever is actually going to wait till it recieves a reply.We can fix that by putting a timeout here and once the tout of 2000 is up.to terminate handle information kicks in
+     {reply, yggdrasil_logic:yggdrasil_connect(Port, Yggdrasil), State};
 
 handle_call(_Request, _From, State) ->                                        
     {reply, ok, State}.

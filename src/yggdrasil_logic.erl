@@ -3,10 +3,11 @@
 % A yggdrasil server written in erlang which prints back to the user whatever
 % they sent. Whenever the user may want to exit, he/she has the
 % possibility of closing the connection by typing "exit".
-%
+% yggdrasil_system:start().
+% yggdrasil_client:yggdrasil_connect(12321,"203:18f0:c3bb:cd12:66d2:bb08:ce8d:9fde").
 
 -module(yggdrasil_logic).
--export([yggdrasil_kushal/2, connect/2, recv_loop/1]).
+-export([yggdrasil_connect/2, connect/2, recv_loop/1]).
 -compile(export_all).
 
 
@@ -32,7 +33,7 @@ You and I have memories longer than the road stretches out ahead\x1b[0m.\r\n"]).
 % add any Port number eg:12321 and your yggdrasil address in the place of "Yggdrasil" 
 
 
-yggdrasil_kushal(Port,Yggdrasil) ->
+yggdrasil_connect(Port,Yggdrasil) ->
   {match,Check_yggdrasil} = re:run(Yggdrasil,"20"),
   if
       (Check_yggdrasil == [{0,2}]) -> {ok,Parsed_add} = inet:parse_address(Yggdrasil),  
