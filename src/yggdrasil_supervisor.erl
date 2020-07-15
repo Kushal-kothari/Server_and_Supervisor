@@ -1,5 +1,6 @@
 -module(yggdrasil_supervisor).
 -behaviour(supervisor).
+-include_lib("kernel/include/logger.hrl").
 
 %% API
 -export([start_link/0]).
@@ -9,14 +10,11 @@ start_link() ->
     supervisor:start_link({global, ?MODULE}, ?MODULE, []).
 
 init([]) ->
-    io:format("~p (~p) starting . . . ~n", [{global, ?MODULE}, self()]),
-
-
+    ?LOG_INFO("~p (~p) starting . . . ~n", [{global, ?MODULE}, self()]),
+    
 %%% if maxrestarts restarts occurs in maxsecondsrestarts seconds    
 %%% supervisor and child process are killed
-
-
-    
+   
     RestartStrategy = one_for_one,
     MaxRestarts = 3,
     MaxSecondsBetweenRestarts = 5,
